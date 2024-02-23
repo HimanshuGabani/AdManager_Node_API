@@ -8,12 +8,12 @@ const bcrypt=require("bcrypt");
 //-------- create user profile ----------
 const registerUser=errorHandler(async(req,res,next)=>{
     try {
-        const {name,email,contactNo,role,password}=req.body;
+        const {uid,name,email,contactNo,role,password}=req.body;
         const userExistsByEmail = await userModel.findOne({ email });
         const userExistsByContactNo = await userModel.findOne({ contactNo });
         const bcryptPassword=await bcrypt.hash(password,10);
 
-        if(!name || !email || !contactNo || !role || !password){
+        if(!uid || !name || !email || !contactNo || !role || !password){
             res.status(400).json({error_message:"all fields are required !"});
         }else if (userExistsByEmail && userExistsByContactNo) {
             res.status(400).json({ error_message: `User with email ${email} and contact number ${contactNo} already exists !` });
@@ -27,6 +27,7 @@ const registerUser=errorHandler(async(req,res,next)=>{
             return res.status(400).json({ error_message: "Invalid contact number format! It should be 10 digits." });
         }else{
             const createdUser=await userModel.create({
+                uid,
                 name,
                 email,
                 contactNo,
@@ -59,6 +60,7 @@ const loginUser = errorHandler(async (req, res) => {
         if (userExists && (await bcrypt.compare(password, userExists.password))) {
             return res.status(200).json({
                 _id: userExists._id,
+                uid: userExists.uid,
                 name: userExists.name,
                 email: userExists.email,
                 contactNo: userExists.contactNo,
@@ -195,7 +197,7 @@ const deleteUser=errorHandler(async(req,res,next)=>{
     try {
         
         const userId = req.query.id; 
-        const user = await userModel.findOneAndDelete({_id: userId});
+        const user = await userModel.findOneAndDelete({uid: userId});
         // const user=await userModel.findOneAndDelete({_id:req.query.id});
         if (!user) {
             res.status(404).json({error_message:"User not found !"});
