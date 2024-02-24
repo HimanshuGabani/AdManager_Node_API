@@ -195,9 +195,9 @@ const getUserById=errorHandler(async(req,res,next)=>{
 //-------- delete user profile ----------
 const deleteUser=errorHandler(async(req,res,next)=>{
     try {
-        
-        const userId = req.query.id; 
-        const user = await userModel.findOneAndDelete({uid: userId});
+
+        const {uid}=req.body;
+        const user = await userModel.findOneAndDelete({uid});
         // const user=await userModel.findOneAndDelete({_id:req.query.id});
         if (!user) {
             res.status(404).json({error_message:"User not found !"});
