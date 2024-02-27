@@ -1,8 +1,12 @@
 const express=require("express");
 const router=express.Router();
-const {createAdvertise}=require("../controllers/advertiseController");
+const {createAdvertise, updateAdveritse, deleteAdvertise, watchAdvertise, getAdvertise}=require("../controllers/advertiseController");
 
 // router.post("/createAdvertise",createAdvertise);
-router.route("/createAdvertise").post(createAdvertise);
+router.route("").get(getAdvertise);
+router.route("").post(createAdvertise);
+router.route("").patch(updateAdveritse);
+router.route("").delete(deleteAdvertise);
+router.route("/watched").post(watchAdvertise);
 
 module.exports=router;

@@ -30,7 +30,6 @@ const advertiseSchema=mongoose.Schema({
     },
     redirect: {
         type: String,
-
     },
     image: {
         type: String,
@@ -56,7 +55,8 @@ const advertiseSchema=mongoose.Schema({
 
     approve: {
         type: Boolean,
-        required: true
+        // required: true,
+        default: true
     }
 },
     {
@@ -64,4 +64,4 @@ const advertiseSchema=mongoose.Schema({
     },
 );
 
-module.exports=mongoose.model("advertise",advertiseSchema);
+module.exports=mongoose.model("advertises",advertiseSchema);
