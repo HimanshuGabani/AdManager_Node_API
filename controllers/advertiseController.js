@@ -1,6 +1,7 @@
 const advertiseModel = require("../models/advertiseModel");
 const errorHandler=require("express-async-handler");
 const bcrypt=require("bcrypt");
+const userModel = require("../models/userModel");
 
 
 
@@ -37,6 +38,23 @@ const createAdvertise=errorHandler(async(req,res)=>{
             res.status(500).json({ message: "Internal server error !" });
         }
 });
+
+//-------- get All Advertise ----------
+const getAllAdvertise=errorHandler(async(req,res,next)=>{
+    try {
+        const advertise = await advertiseModel.find();
+        if (!advertise) {
+            res.status(404).json({error_message:"No Advertise Availabel !"});
+        } else{
+            res.send(advertise);
+        }
+    } catch (err) {
+        next(err);
+        res.status(500).json({ message: "Internal server error !" });
+    }
+});
+
+
 
 
 
@@ -97,8 +115,13 @@ const deleteAdvertise=errorHandler(async(req,res,next)=>{
 //-------- find by id ----------
 const getAdvertise=errorHandler(async(req,res,next)=>{
     try {
-        const {id} = req.body;
-        const advertise = await advertiseModel.findById(id);
+        const {id,advertiserId} = req.body;
+        if (!id && !advertiserId){
+            res.status(404).json({error_message:"Advertise ID or Advertiser id must requiered"});
+        }
+
+        const advertise = !id ? await advertiseModel.find({advertiserId:advertiserId}) : await advertiseModel.findById(id);
+
         if (!advertise) {
             res.status(404).json({error_message:"Advertise not found !"});
         } else{
@@ -147,11 +170,6 @@ const watchAdvertise=errorHandler(async(req,res,next)=>{
 });
 
 
-
-
-
-
-
-module.exports={createAdvertise, updateAdveritse, deleteAdvertise, getAdvertise, watchAdvertise};
+module.exports={createAdvertise, getAllAdvertise, updateAdveritse, deleteAdvertise, getAdvertise, watchAdvertise};
 
 

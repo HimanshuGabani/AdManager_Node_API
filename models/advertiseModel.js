@@ -24,7 +24,7 @@ const advertiseSchema=mongoose.Schema({
         type: String,
         required: true
     },
-    advertiser_id: {
+    advertiserId: {
         type: String,
         required: true
     },
