@@ -7,7 +7,6 @@ const userModel = require("../models/userModel");
 
 //-------- create Advertis ----------
 
-
 const createAdvertise=errorHandler(async(req,res)=>{
     try {
         const {title,advertiserId,category,redirect,image,type,remain_Views,status}=req.body;
@@ -165,6 +164,20 @@ const watchAdvertise=errorHandler(async(req,res,next)=>{
 
 });
 
+
+const fetchRand=errorHandler(async(req,res,next)=>{
+    
+    try {
+        const advertise = await advertiseModel.findOne({status:"ongoing"});
+        res.send(advertise);    
+    } catch (error) {
+        next(error);
+        res.status(500).json({ message: "Internal server error !" });
+    }
+
+
+});
+
 const makePay=errorHandler(async(req,res,next)=>{
     
     try {
@@ -181,6 +194,6 @@ const makePay=errorHandler(async(req,res,next)=>{
 
 
 
-module.exports={createAdvertise, getAllAdvertise, updateAdveritse, deleteAdvertise, getAdvertise, watchAdvertise};
+module.exports={createAdvertise, getAllAdvertise, updateAdveritse, deleteAdvertise, getAdvertise, watchAdvertise, fetchRand};
 
 

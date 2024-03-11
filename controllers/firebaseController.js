@@ -8,7 +8,7 @@ const errorHandler=require("express-async-handler");
 
 const getAllAdvertisers=errorHandler(async(req,res,next)=>{
     try {
-        console.log("Jami ***")
+
         const myCollection = collection(db, 'Advertisers');
         const snapShot = await getDocs(myCollection);
         const datalist = snapShot.docs.map(doc => doc.data());
@@ -26,7 +26,6 @@ const getAllAdvertisers=errorHandler(async(req,res,next)=>{
 });
 const getAllPublishers=errorHandler(async(req,res,next)=>{
     try {
-        console.log("Jami ***")
         const myCollection = collection(db, 'Publishers');
         const snapShot = await getDocs(myCollection);
         const datalist = snapShot.docs.map(doc => doc.data());
