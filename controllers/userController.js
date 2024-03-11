@@ -2,18 +2,15 @@ const userModel=require("../models/userModel");
 const errorHandler=require("express-async-handler");
 const bcrypt=require("bcrypt");
 
-
-
-
 //-------- create user profile ----------
 const registerUser=errorHandler(async(req,res,next)=>{
     try {
-        const {uid,name,email,contactNo,role,password}=req.body;
+        const {name,email,contactNo,role,password}=req.body;
         const userExistsByEmail = await userModel.findOne({ email });
         const userExistsByContactNo = await userModel.findOne({ contactNo });
         const bcryptPassword=await bcrypt.hash(password,10);
 
-        if(!uid || !name || !email || !contactNo || !role || !password){
+        if(!name || !email || !contactNo || !role || !password){
             res.status(400).json({error_message:"all fields are required !"});
         }else if (userExistsByEmail && userExistsByContactNo) {
             res.status(400).json({ error_message: `User with email ${email} and contact number ${contactNo} already exists !` });
@@ -27,7 +24,6 @@ const registerUser=errorHandler(async(req,res,next)=>{
             return res.status(400).json({ error_message: "Invalid contact number format! It should be 10 digits." });
         }else{
             const createdUser=await userModel.create({
-                uid,
                 name,
                 email,
                 contactNo,

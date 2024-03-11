@@ -62,7 +62,7 @@ const advertiseSchema=mongoose.Schema({
     status: {
         type: String,
         enum: ['ongoing', 'pending', 'history'],
-        default: 'Active'
+        default: 'pending'
     },
 
     approve: {

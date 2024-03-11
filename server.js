@@ -12,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/user",require("./routes/userRoute"));
+app.use("/fire", require("./routes/fireRout"));
 app.use("/advertise", require("./routes/advertiseRoute"));
 
 

@@ -12,7 +12,6 @@ const createAdvertise=errorHandler(async(req,res)=>{
     try {
         const {title,advertiserId,category,redirect,image,type,remain_Views,status}=req.body;
 
-
         if(!title || !advertiserId || !category || !image || !type || !remain_Views || !status){
             res.status(400).json({error_message:"Some fields are missing!"});
         }else{

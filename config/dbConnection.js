@@ -3,7 +3,6 @@ const mongoose=require("mongoose");
 const connectDb=async()=>{
     try {
 
-        
   //-------------- connect with mongodb database ---------------------------
         const connect=await mongoose.connect(
             process.env.CONNECTION_STRING
@@ -16,7 +15,7 @@ const connectDb=async()=>{
         console.log(error);
         process.exit(1);
     }
-    //  ----------------------------------------------------------------------- 
+  //  ----------------------------------------------------------------------- 
 };
 
 module.exports=connectDb;
