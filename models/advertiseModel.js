@@ -11,6 +11,12 @@ const previous_Plans = mongoose.Schema({
         type: Number,
         required: true
     },
+
+    transectionId: {
+        type: String,
+        required: true
+    },
+
     date: {
         type: String,
         required: true
@@ -40,6 +46,12 @@ const advertiseSchema=mongoose.Schema({
         type: String,
         required: true
     },
+
+    category: {
+        type: String,
+        required: true
+    },
+
     previous_plans: [ previous_Plans ],
 
     remain_Views: {
@@ -49,7 +61,7 @@ const advertiseSchema=mongoose.Schema({
     
     status: {
         type: String,
-        enum: ['Active', 'Disable'],
+        enum: ['ongoing', 'pending', 'history'],
         default: 'Active'
     },
 

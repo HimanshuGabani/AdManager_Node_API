@@ -10,16 +10,16 @@ const userModel = require("../models/userModel");
 
 const createAdvertise=errorHandler(async(req,res)=>{
     try {
-        const {title,advertiserId,catagory,redirect,image,type,remain_Views,status}=req.body;
+        const {title,advertiserId,category,redirect,image,type,remain_Views,status}=req.body;
 
 
-        if(!title || !advertiserId || !catagory || !image || !type || !remain_Views || !status){
+        if(!title || !advertiserId || !category || !image || !type || !remain_Views || !status){
             res.status(400).json({error_message:"Some fields are missing!"});
         }else{
             const createOne=await advertiseModel.create({
                 title,
                 advertiserId,
-                catagory,
+                category,
                 redirect,
                 image,
                 type,
@@ -61,7 +61,7 @@ const getAllAdvertise=errorHandler(async(req,res,next)=>{
 //-------- update Advertise ----------
 const updateAdveritse = errorHandler(async (req, res, next) => {
     try {
-        const {id, titel,catagory,redirect,image,type,remain_Views,status } = req.body;
+        const {id, titel,category,redirect,image,type,remain_Views,status } = req.body;
         
         if (!id) {
             res.status(400).json({ error_message: "All fields are required !" });
@@ -72,7 +72,7 @@ const updateAdveritse = errorHandler(async (req, res, next) => {
             res.status(404).json({ error_message: "Advertise not found !" });
         }else{  
             advertise.titel = titel;
-            advertise.catagory = catagory;
+            advertise.category = category;
             advertise.redirect = redirect;
             advertise.image = image;
             advertise.type = type;
@@ -93,7 +93,6 @@ const updateAdveritse = errorHandler(async (req, res, next) => {
         res.status(500).json({ message: "Internal server error !" });
     }
 });
-
 
 //-------- delete Advertise ----------
 const deleteAdvertise=errorHandler(async(req,res,next)=>{
@@ -138,19 +137,17 @@ const getAdvertise=errorHandler(async(req,res,next)=>{
 const watchAdvertise=errorHandler(async(req,res,next)=>{
 
     try {
-        
         const {id} = req.body;
         const advertise = await advertiseModel.findById(id);
 
         if (advertise.remain_Views == 0) {
             advertise.approve = false;
-            advertise.status = "Disable";
+            advertise.status = "history";
             res.status(200).json({ message: "This advertise is dissable" });
         } else {
             advertise.remain_Views -= 1;
             if (advertise.remain_Views == 0) {
-                advertise.approve = false;
-                advertise.status = "Disable";
+                advertise.status = "history";
                 res.status(200).json({ message: "This advertise is dissable" });
             }
         }
@@ -168,6 +165,21 @@ const watchAdvertise=errorHandler(async(req,res,next)=>{
     }
 
 });
+
+const makePay=errorHandler(async(req,res,next)=>{
+    
+    try {
+        const {previous_Plans} = req.body;
+
+    } catch (error) {
+        next(error);
+        res.status(500).json({ message: "Internal server error !" });
+    }
+
+
+});
+
+
 
 
 module.exports={createAdvertise, getAllAdvertise, updateAdveritse, deleteAdvertise, getAdvertise, watchAdvertise};
