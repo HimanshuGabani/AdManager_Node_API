@@ -10,15 +10,15 @@ const userModel = require("../models/userModel");
 
 const createAdvertise=errorHandler(async(req,res)=>{
     try {
-        const {titel,advertiser_id,catagory,redirect,image,type,remain_Views,status}=req.body;
+        const {title,advertiserId,catagory,redirect,image,type,remain_Views,status}=req.body;
 
 
-        if(!titel || !advertiser_id || !catagory || !image || !type || !remain_Views || !status){
+        if(!title || !advertiserId || !catagory || !image || !type || !remain_Views || !status){
             res.status(400).json({error_message:"Some fields are missing!"});
         }else{
             const createOne=await advertiseModel.create({
-                titel,
-                advertiser_id,
+                title,
+                advertiserId,
                 catagory,
                 redirect,
                 image,

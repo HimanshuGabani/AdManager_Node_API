@@ -6,7 +6,7 @@ const {createAdvertise, getAllAdvertise, updateAdveritse, deleteAdvertise, watch
 
 
 router.route("").get(getAllAdvertise);
-router.route("/id").get(getAdvertise);
+router.route("/id").post(getAdvertise);
 router.route("").post(createAdvertise);
 router.route("").patch(updateAdveritse);
 router.route("").delete(deleteAdvertise);

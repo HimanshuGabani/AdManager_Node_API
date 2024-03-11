@@ -20,7 +20,7 @@ const previous_Plans = mongoose.Schema({
 
 
 const advertiseSchema=mongoose.Schema({
-    titel: {
+    title: {
         type: String,
         required: true
     },
