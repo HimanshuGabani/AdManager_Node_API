@@ -164,36 +164,58 @@ const watchAdvertise=errorHandler(async(req,res,next)=>{
 
 });
 
-
-const fetchRand=errorHandler(async(req,res,next)=>{
+const changeState=errorHandler(async(req,res,next)=>{
     
-    try {
-        const advertise = await advertiseModel.findOne({status:"ongoing"});
-        res.send(advertise);    
+    try {    
+        const {_id, status} = req.body;
+        const advertise = await advertiseModel.findById(_id);
+        if(!advertise){
+            res.status(404).json({ error_message: "Advertise not found !" });
+        }
+        advertise.status = status;
+        const updatedAdvertise = await advertise.save();
+        if (updatedAdvertise) {
+            res.status(200).json({ message: "Advertise state updated successfully :)" });
+        } else {
+            res.status(400).json({ error_message: "Failed to update Advertise state. Please try again." });
+        }
+        
     } catch (error) {
         next(error);
         res.status(500).json({ message: "Internal server error !" });
     }
-
-
 });
 
-const makePay=errorHandler(async(req,res,next)=>{
+
+// const fetchRand=errorHandler(async(req,res,next)=>{
     
-    try {
-        const {previous_Plans} = req.body;
-
-    } catch (error) {
-        next(error);
-        res.status(500).json({ message: "Internal server error !" });
-    }
-
-
-});
+//     try {
+//         const advertise = await advertiseModel.findOne({status:"ongoing"});
+//         res.send(advertise);    
+//     } catch (error) {
+//         next(error);
+//         res.status(500).json({ message: "Internal server error !" });
+//     }
 
 
+// });
+
+// const makePay=errorHandler(async(req,res,next)=>{
+    
+//     try {
+//         const {previous_Plans} = req.body;
+
+//     } catch (error) {
+//         next(error);
+//         res.status(500).json({ message: "Internal server error !" });
+//     }
 
 
-module.exports={createAdvertise, getAllAdvertise, updateAdveritse, deleteAdvertise, getAdvertise, watchAdvertise, fetchRand};
+// });
+
+
+
+
+module.exports={createAdvertise, getAllAdvertise, updateAdveritse, deleteAdvertise, getAdvertise, watchAdvertise, changeState};
 
 
