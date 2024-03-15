@@ -92,6 +92,32 @@ const updateAdveritse = errorHandler(async (req, res, next) => {
     }
 });
 
+//-------- Change Status of Advertise ----------
+
+const changeState=errorHandler(async(req,res,next)=>{
+    
+    try {    
+        const {_id, status} = req.body;
+        const advertise = await advertiseModel.findById(_id);
+        if(!advertise){
+            res.status(404).json({ error_message: "Advertise not found !" });
+        }
+        advertise.status = status;
+        const updatedAdvertise = await advertise.save();
+        if (updatedAdvertise) {
+            res.status(200).json({ message: "Advertise state updated successfully :)" });
+        } else {
+            res.status(400).json({ error_message: "Failed to update Advertise state. Please try again." });
+        }
+        
+    } catch (error) {
+        next(error);
+        res.status(500).json({ message: "Internal server error !" });
+    }
+});
+
+
+
 //-------- delete Advertise ----------
 const deleteAdvertise=errorHandler(async(req,res,next)=>{
     try {
@@ -164,58 +190,51 @@ const watchAdvertise=errorHandler(async(req,res,next)=>{
 
 });
 
-const changeState=errorHandler(async(req,res,next)=>{
-    
-    try {    
-        const {_id, status} = req.body;
-        const advertise = await advertiseModel.findById(_id);
-        if(!advertise){
-            res.status(404).json({ error_message: "Advertise not found !" });
-        }
-        advertise.status = status;
-        const updatedAdvertise = await advertise.save();
-        if (updatedAdvertise) {
-            res.status(200).json({ message: "Advertise state updated successfully :)" });
+const getRandomDocument = errorHandler(async (req, res, next) => {
+    try {
+        const {id} = req.body;
+        const randomDocument = await advertiseModel.aggregate([{ $match: { status: "ongoing" } }, { $sample: { size: 1 } }]);
+
+        if (randomDocument.length === 0) {
+            res.status(200).json({ message: "No Advertise Available" });
         } else {
-            res.status(400).json({ error_message: "Failed to update Advertise state. Please try again." });
+            res.send(randomDocument[0]);
         }
-        
+
     } catch (error) {
         next(error);
-        res.status(500).json({ message: "Internal server error !" });
+        res.status(500).json({ message: "Internal server error!" });
     }
 });
 
+async function remainViewsMinuse(advertise) {
+    try {
+        advertise.remain_Views -= 1;
+        if (advertise.remain_Views == 0) { 
+            advertise.status = "history";
+            const adsave = advertise.save();
+            if (!adsave) {
+                res.status(400).json({ error_message: "Failed change advertise status as History" });
+            }
+        }
+        const updatedAdvertise = await advertise.save();
 
-// const fetchRand=errorHandler(async(req,res,next)=>{
-    
-//     try {
-//         const advertise = await advertiseModel.findOne({status:"ongoing"});
-//         res.send(advertise);    
-//     } catch (error) {
-//         next(error);
-//         res.status(500).json({ message: "Internal server error !" });
-//     }
+        if (!updatedAdvertise) {
+            res.status(400).json({ error_message: "Failed to minuse Advertise Remain Views" });
+        }
 
+    } catch (error) {
+        next(error);
+        res.status(500).json({ message: "Internal server error!" });
+    }
+}
 
-// });
-
-// const makePay=errorHandler(async(req,res,next)=>{
-    
-//     try {
-//         const {previous_Plans} = req.body;
-
-//     } catch (error) {
-//         next(error);
-//         res.status(500).json({ message: "Internal server error !" });
-//     }
-
-
-// });
+async function publisherPlus(publisherId) {
 
 
+}
 
 
-module.exports={createAdvertise, getAllAdvertise, updateAdveritse, deleteAdvertise, getAdvertise, watchAdvertise, changeState};
+module.exports={createAdvertise, getAllAdvertise, updateAdveritse, deleteAdvertise, getAdvertise, watchAdvertise, changeState, getRandomDocument};
 
 

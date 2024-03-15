@@ -8,7 +8,7 @@ const errorHandler=require("express-async-handler");
 
 const getAllAdvertisers=errorHandler(async(req,res,next)=>{
     try {
-
+        
         const myCollection = collection(db, 'Advertisers');
         const snapShot = await getDocs(myCollection);
         const datalist = snapShot.docs.map(doc => doc.data());
@@ -24,6 +24,7 @@ const getAllAdvertisers=errorHandler(async(req,res,next)=>{
         res.status(500).json({ message: "Internal server error !" });
     }
 });
+
 const getAllPublishers=errorHandler(async(req,res,next)=>{
     try {
         const myCollection = collection(db, 'Publishers');
