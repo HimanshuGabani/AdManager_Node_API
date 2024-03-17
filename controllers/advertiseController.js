@@ -1,6 +1,12 @@
 const advertiseModel = require("../models/advertiseModel");
 const errorHandler=require("express-async-handler");
 
+const userModel=require("../models/userModel");
+const db = require("../config/firebaseConnection");
+const { getFirestore }=require('firebase/firestore/lite');
+const errorHandler=require("express-async-handler");
+
+
 
 
 //-------- create Advertis ----------
@@ -49,10 +55,6 @@ const getAllAdvertise=errorHandler(async(req,res,next)=>{
         res.status(500).json({ message: "Internal server error !" });
     }
 });
-
-
-
-
 
 //-------- update Advertise ----------
 const updateAdveritse = errorHandler(async (req, res, next) => {
@@ -190,13 +192,36 @@ const watchAdvertise=errorHandler(async(req,res,next)=>{
 
 const getRandomDocument = errorHandler(async (req, res, next) => {
     try {
-        const {id} = req.body;
+        // const {id} = req.body;
         const randomDocument = await advertiseModel.aggregate([{ $match: { status: "ongoing" } }, { $sample: { size: 1 } }]);
-
+        
         if (randomDocument.length === 0) {
             res.status(200).json({ message: "No Advertise Available" });
         } else {
-            res.send(randomDocument[0]);
+            let adv = randomDocument[0];
+
+            // Minus From Advertise
+            adv.remain_Views -= 1;
+            console.log(adv.remain_Views);
+
+            if (adv.remain_Views === 0) { 
+                adv.status = "history";
+            }
+
+            // Save the updated document back to the database
+            const updatedAdvertise = await advertiseModel.findByIdAndUpdate(adv._id, adv);
+            if (!updateAdveritse) {
+                res.status(200).json({ message: "Advertise is not update" });
+            }else{
+
+                
+
+
+
+                res.send(adv);
+            }
+
+
         }
 
     } catch (error) {
@@ -205,27 +230,10 @@ const getRandomDocument = errorHandler(async (req, res, next) => {
     }
 });
 
-async function remainViewsMinuse(advertise) {
-    try {
-        advertise.remain_Views -= 1;
-        if (advertise.remain_Views == 0) { 
-            advertise.status = "history";
-            const adsave = advertise.save();
-            if (!adsave) {
-                res.status(400).json({ error_message: "Failed change advertise status as History" });
-            }
-        }
-        const updatedAdvertise = await advertise.save();
 
-        if (!updatedAdvertise) {
-            res.status(400).json({ error_message: "Failed to minuse Advertise Remain Views" });
-        }
 
-    } catch (error) {
-        next(error);
-        res.status(500).json({ message: "Internal server error!" });
-    }
-}
+
+
 
 async function publisherPlus(publisherId) {
 

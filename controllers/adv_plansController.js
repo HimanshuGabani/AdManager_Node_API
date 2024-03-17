@@ -4,9 +4,9 @@ const adv_plansModel = require("../models/adv_plansModel");
 //-------- create new plan ----------
 const createPlans=errorHandler(async(req,res)=>{
     try {
-        const {name, views, price, type, status}=req.body;
+        const {name, views, price, type}=req.body;
 
-        if(!name || !views || !price || !type || !status){
+        if(!name || !views || !price || !type){
             res.status(400).json({error_message:"all filds are requier !"});
         }else{
             const createOne=await adv_plansModel.create({
@@ -14,7 +14,7 @@ const createPlans=errorHandler(async(req,res)=>{
                 views,
                 price,
                 type,
-                status
+                status : "Active"
             });
             if (createOne) {
                 res.status(200).json({success_message: "New plan added successfully :)"});
