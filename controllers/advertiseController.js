@@ -1,7 +1,5 @@
 const advertiseModel = require("../models/advertiseModel");
 const errorHandler=require("express-async-handler");
-const bcrypt=require("bcrypt");
-const userModel = require("../models/userModel");
 
 
 

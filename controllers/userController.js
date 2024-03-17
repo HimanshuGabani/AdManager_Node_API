@@ -168,12 +168,12 @@ const getAllUsers=errorHandler(async(req,res,next)=>{
 
 
 
-//-------- find by id ----------
-const getUserById=errorHandler(async(req,res,next)=>{
+//-------- find by email ----------
+const getUserByemail=errorHandler(async(req,res,next)=>{
     try {
-         const userId = req.query.id; 
-        const user = await userModel.findById(userId);
-        // const user=await userModel.findById(req.params.id)
+        // const email = req.query.id; 
+        const { email } = req.body;
+        const user = await userModel.findOne({email:email});
         if (!user) {
             res.status(404).json({error_message:"User not found !"});
         }
@@ -207,7 +207,7 @@ const deleteUser=errorHandler(async(req,res,next)=>{
 });
 
 
-module.exports={loginUser,registerUser,getAllUsers,getUserById,updateUser,forgetPassword,deleteUser};
+module.exports={loginUser,registerUser,getAllUsers,getUserByemail,updateUser,forgetPassword,deleteUser};
 
 
 
