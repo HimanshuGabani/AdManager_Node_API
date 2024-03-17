@@ -8,7 +8,7 @@ router.route("").get(getAllUsers);
 router.route("/signup").post(registerUser);
 router.post("/login",loginUser);
 router.post("/resetpassword",forgetPassword);
-router.route("/getby").get(getUserByemail).patch(updateUser);
+router.route("/getby").post(getUserByemail).patch(updateUser);
 router.route("").delete(deleteUser);
 
 
