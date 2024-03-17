@@ -3,9 +3,7 @@ const db = require("../config/firebaseConnection");
 const { getFirestore, collection, getDocs }=require('firebase/firestore/lite');
 const errorHandler=require("express-async-handler");
 
-
-
-
+4
 const getAllAdvertisers=errorHandler(async(req,res,next)=>{
     try {
         
