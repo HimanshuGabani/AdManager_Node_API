@@ -1,15 +1,10 @@
 const advertiseModel = require("../models/advertiseModel");
 const errorHandler=require("express-async-handler");
-
 const userModel=require("../models/userModel");
 const db = require("../config/firebaseConnection");
 const { getFirestore }=require('firebase/firestore/lite');
 
-
-
-
 //-------- create Advertis ----------
-
 const createAdvertise=errorHandler(async(req,res)=>{
     try {
         const {title,advertiserId,category,redirect,image,type,remain_Views,status}=req.body;
@@ -213,11 +208,9 @@ const getRandomDocument = errorHandler(async (req, res, next) => {
                 res.status(200).json({ message: "Advertise is not update" });
             }else{
 
-                const myCollection = collection(db, 'Publishers');
-                const snapShot = await getDocs(myCollection);
-
-
-
+                // const myCollection = collection(db, 'Publishers');
+                // const snapShot = await getDocs(myCollection);
+                
                 res.send(adv);
             }
 
