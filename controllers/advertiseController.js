@@ -2,12 +2,12 @@ const advertiseModel = require("../models/advertiseModel");
 const errorHandler=require("express-async-handler");
 const userModel=require("../models/userModel");
 const db = require("../config/firebaseConnection");
-const { getFirestore }=require('firebase/firestore/lite');
+const { getFirestore, collection, getDocs }=require('firebase/firestore/lite');
 
 //-------- create Advertis ----------
 const createAdvertise=errorHandler(async(req,res)=>{
     try {
-        const {title,advertiserId,category,redirect,image,type,remain_Views,status}=req.body;
+        const {title,advertiserId,category,redirect,image,type,remain_Views,status, transactionId, amount}=req.body;
 
         if(!title || !advertiserId || !category || !image || !type || !remain_Views || !status){
             res.status(400).json({error_message:"Some fields are missing!"});
@@ -20,6 +20,8 @@ const createAdvertise=errorHandler(async(req,res)=>{
                 image,
                 type,
                 remain_Views,
+                transactionId,
+                amount,
                 status,
                 approve: false
             },);
@@ -75,6 +77,8 @@ const updateAdveritse = errorHandler(async (req, res, next) => {
             if (updatedAdvertise) {
                 res.status(200).json({ message: "Advertise updated successfully :)" });
             } else {
+                db.collection
+
                 res.status(400).json({ error_message: "Failed to update Advertise. Please try again." });
             }
         }
@@ -152,41 +156,44 @@ const getAdvertise=errorHandler(async(req,res,next)=>{
 
 
 //-------- Watch Minuse Advertise ----------
-const watchAdvertise=errorHandler(async(req,res,next)=>{
+// const watchAdvertise=errorHandler(async(req,res,next)=>{
+//     try {
+//         const {id} = req.body;
+//         const advertise = await advertiseModel.findById(id);
 
-    try {
-        const {id} = req.body;
-        const advertise = await advertiseModel.findById(id);
+//         if (advertise.remain_Views == 0) {
+//             advertise.approve = false;
+//             advertise.status = "history";
+//             await advertise.save();
+//             res.status(200).json({ message: "This advertise is dissable" });
+//         } else {
+//             advertise.remain_Views -= 1;
+//             if (advertise.remain_Views == 0) {
+//                 advertise.transactionId = "";
+//                 advertise.amount = 0;
+//                 advertise.status = "history";
+//                 await advertise.save();
+//                 res.status(200).json({ message: "This advertise is dissable" });
+//             }
+//         }
 
-        if (advertise.remain_Views == 0) {
-            advertise.approve = false;
-            advertise.status = "history";
-            res.status(200).json({ message: "This advertise is dissable" });
-        } else {
-            advertise.remain_Views -= 1;
-            if (advertise.remain_Views == 0) {
-                advertise.status = "history";
-                res.status(200).json({ message: "This advertise is dissable" });
-            }
-        }
+//         const updatedAdvertise = await advertise.save();
+//         if (updatedAdvertise) {
+//             res.status(200).json({ message: "current remain views :-  "+advertise.remain_Views });
+//         } else {
+//             res.status(400).json({ error_message: "Failed to decrise Advertise views. Please try again." });
+//         }       
 
-        const updatedAdvertise = await advertise.save();
-        if (updatedAdvertise) {
-            res.status(200).json({ message: "current remain views :-  "+advertise.remain_Views });
-        } else {
-            res.status(400).json({ error_message: "Failed to decrise Advertise views. Please try again." });
-        }       
+//     } catch (error) {
+//         next(error);
+//         res.status(500).json({ message: "Internal server error !" });
+//     }
 
-    } catch (error) {
-        next(error);
-        res.status(500).json({ message: "Internal server error !" });
-    }
-
-});
+// });
 
 const getRandomDocument = errorHandler(async (req, res, next) => {
     try {
-        // const {id} = req.body;
+        const {id} = req.body;
         const randomDocument = await advertiseModel.aggregate([{ $match: { status: "ongoing" } }, { $sample: { size: 1 } }]);
         
         if (randomDocument.length === 0) {
@@ -206,14 +213,10 @@ const getRandomDocument = errorHandler(async (req, res, next) => {
             const updatedAdvertise = await advertiseModel.findByIdAndUpdate(adv._id, adv);
             if (!updateAdveritse) {
                 res.status(200).json({ message: "Advertise is not update" });
-            }else{
-
-                // const myCollection = collection(db, 'Publishers');
-                // const snapShot = await getDocs(myCollection);
-                
+            } else {
+                    // db.collection('Publishers').getDocs(id)
                 res.send(adv);
             }
-
 
         }
 
@@ -225,15 +228,6 @@ const getRandomDocument = errorHandler(async (req, res, next) => {
 
 
 
-
-
-
-async function publisherPlus(publisherId) {
-
-
-}
-
-
-module.exports={createAdvertise, getAllAdvertise, updateAdveritse, deleteAdvertise, getAdvertise, watchAdvertise, changeState, getRandomDocument};
+module.exports={createAdvertise, getAllAdvertise, updateAdveritse, deleteAdvertise, getAdvertise, changeState, getRandomDocument};
 
 

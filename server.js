@@ -14,7 +14,9 @@ app.use(express.json());
 app.use("/user",require("./routes/userRoute"));
 app.use("/plans", require("./routes/adv_plansRouts"));
 app.use("/advertise", require("./routes/advertiseRoute"));
+app.use("/transaction", require("./routes/transectionRouts"));
 app.use("/fire", require("./routes/fireRout"));
+
 
 app.listen(port,()=>{
     console.log(`server running on port '${port}'`)

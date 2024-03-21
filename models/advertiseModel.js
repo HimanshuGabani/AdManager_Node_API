@@ -2,27 +2,27 @@ const mongoose=require("mongoose");
 
 
 
-const previous_Plans = mongoose.Schema({
-    price: {
-        type: Number,
-        required: true
-    },
-    views: {
-        type: Number,
-        required: true
-    },
+// const previous_Plans = mongoose.Schema({
+//     price: {
+//         type: Number,
+//         required: true
+//     },
+//     views: {
+//         type: Number,
+//         required: true
+//     },
 
-    transectionId: {
-        type: String,
-        required: true
-    },
+//     transectionId: {
+//         type: String,
+//         required: true
+//     },
 
-    date: {
-        type: String,
-        required: true
-    }
+//     date: {
+//         type: String,
+//         required: true
+//     }
 
-});
+// });
 
 
 const advertiseSchema=mongoose.Schema({
@@ -52,7 +52,14 @@ const advertiseSchema=mongoose.Schema({
         required: true
     },
 
-    previous_plans: [ previous_Plans ],
+    transactionId: {
+        type: String,
+        default: ""
+    },
+
+    amount: {
+        type: Number
+    },
 
     remain_Views: {
         type: Number,
