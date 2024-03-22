@@ -1,8 +1,8 @@
+const { application } = require("express");
 const advertiseModel = require("../models/advertiseModel");
+const applicationModel = require("../models/applicationRegisterModel")
 const errorHandler=require("express-async-handler");
-const userModel=require("../models/userModel");
-const db = require("../config/firebaseConnection");
-const { getFirestore, collection, getDocs }=require('firebase/firestore/lite');
+const { app } = require("firebase-admin");
 
 //-------- create Advertis ----------
 const createAdvertise=errorHandler(async(req,res)=>{
@@ -26,7 +26,7 @@ const createAdvertise=errorHandler(async(req,res)=>{
                 approve: false
             },);
             if (createOne) {
-                res.status(200).json({success_message:"Advertise created successfully :)"});
+                res.status(200).json({advertiserId:createOne['_id']});
             }else{
                 res.status(400).json({error_message:"Advertise data are invalid !"});
             }
@@ -193,7 +193,7 @@ const getAdvertise=errorHandler(async(req,res,next)=>{
 
 const getRandomDocument = errorHandler(async (req, res, next) => {
     try {
-        const {id} = req.body;
+        const appID = req.headers["appid"];
         const randomDocument = await advertiseModel.aggregate([{ $match: { status: "ongoing" } }, { $sample: { size: 1 } }]);
         
         if (randomDocument.length === 0) {
@@ -214,12 +214,42 @@ const getRandomDocument = errorHandler(async (req, res, next) => {
             if (!updateAdveritse) {
                 res.status(200).json({ message: "Advertise is not update" });
             } else {
-                    // db.collection('Publishers').getDocs(id)
-                res.send(adv);
+                if (appID) {
+                    const app = await applicationModel.findById(appID);
+                    if (!app){
+                        res.status(200).json({ message: "This application is not registered" }); 
+                    }
+                    app.total_Views += 1;
+                    await app.save();
+                    res.send(adv);
+                }else{
+                    res.status(200).json({ message: "Missing Headers Application Id" }); 
+                }
+                
             }
-
         }
+    } catch (error) {
+        next(error);
+        res.status(500).json({ message: "Internal server error!" });
+    }
+});
 
+const advertiseClicked = errorHandler(async (req, res, next) => {
+    try {
+        const appID = req.headers["appid"];
+        if (!appID){
+            res.status(200).json({ message: "Missing Headers Application Id" }); 
+        }else{
+            const app = await applicationModel.findById(appID);
+            app.totalClicks += 1;
+
+            const clicked = await app.save();
+            if(clicked){
+                res.status(200).json({ message: "Advertise Click Saved" }); 
+            }else{
+                res.status(200).json({ message: "Fail to save advertise click" }); 
+            }
+        }
     } catch (error) {
         next(error);
         res.status(500).json({ message: "Internal server error!" });
@@ -228,6 +258,7 @@ const getRandomDocument = errorHandler(async (req, res, next) => {
 
 
 
-module.exports={createAdvertise, getAllAdvertise, updateAdveritse, deleteAdvertise, getAdvertise, changeState, getRandomDocument};
+
+module.exports={createAdvertise, getAllAdvertise, updateAdveritse, deleteAdvertise, getAdvertise, changeState, getRandomDocument, advertiseClicked};
 
 
