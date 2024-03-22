@@ -63,6 +63,7 @@ const advertiseSchema=mongoose.Schema({
 
     remain_Views: {
         type: Number,
+        default: 0,
         required: true
     },
     

@@ -9,7 +9,7 @@ const createAdvertise=errorHandler(async(req,res)=>{
     try {
         const {title,advertiserId,category,redirect,image,type,remain_Views,status, transactionId, amount}=req.body;
 
-        if(!title || !advertiserId || !category || !image || !type || !remain_Views || !status){
+        if(!title || !advertiserId || !category|| !image || !type || !status ){
             res.status(400).json({error_message:"Some fields are missing!"});
         }else{
             const createOne=await advertiseModel.create({
@@ -249,6 +249,8 @@ const advertiseClicked = errorHandler(async (req, res, next) => {
             }else{
                 res.status(200).json({ message: "Fail to save advertise click" }); 
             }
+
+
         }
     } catch (error) {
         next(error);
