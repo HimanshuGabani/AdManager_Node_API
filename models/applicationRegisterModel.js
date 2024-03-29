@@ -36,6 +36,12 @@ const applicaitonSchema=mongoose.Schema({
         type: Number,
         default: 0,
         required: true
+    },
+
+    totalEarn: {
+        type: Number,
+        default: 0,
+        required: true
     }
 
 

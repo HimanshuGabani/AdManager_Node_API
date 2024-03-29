@@ -220,6 +220,7 @@ const getRandomDocument = errorHandler(async (req, res, next) => {
                         res.status(200).json({ message: "This application is not registered" }); 
                     }
                     app.total_Views += 1;
+                    app.totalEarn += 1;
                     await app.save();
                     res.send(adv);
                 }else{
@@ -242,7 +243,7 @@ const advertiseClicked = errorHandler(async (req, res, next) => {
         }else{
             const app = await applicationModel.findById(appID);
             app.totalClicks += 1;
-
+            app.totalEarn += 2;
             const clicked = await app.save();
             if(clicked){
                 res.status(200).json({ message: "Advertise Click Saved" }); 
@@ -257,6 +258,8 @@ const advertiseClicked = errorHandler(async (req, res, next) => {
         res.status(500).json({ message: "Internal server error!" });
     }
 });
+
+
 
 
 
