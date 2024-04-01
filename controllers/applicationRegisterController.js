@@ -34,6 +34,37 @@ const registerNewApplication=errorHandler(async(req,res)=>{
         }
 });
 
-module.exports={registerNewApplication};
+const getAllApplications=errorHandler(async(req,res)=>{
+    try {
+
+        const advertise = await applicationModel.find();
+        if (!advertise) {
+            res.status(404).json({error_message:"No Application Availabel !"});
+        } else{
+            res.send(advertise);
+        }
+
+    } catch (err) {
+        res.status(500).json({ message: "Internal server error !" });
+    }
+});
+
+
+const getMyApplications=errorHandler(async(req,res)=>{
+    try {
+        const {publisherId}=req.body;
+        const advertise = await applicationModel.find({publisherId});
+
+        if (!advertise) {
+            res.status(404).json({error_message:"No Application Availabel !"});
+        } else{
+            res.send(advertise);
+        }
+
+    } catch (err) {
+        res.status(500).json({ message: "Internal server error !" });
+    }
+});
+module.exports={registerNewApplication, getAllApplications, getMyApplications};
 
 
