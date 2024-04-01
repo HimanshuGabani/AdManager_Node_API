@@ -95,12 +95,16 @@ const updateAdveritse = errorHandler(async (req, res, next) => {
 const changeState=errorHandler(async(req,res,next)=>{
     
     try {    
-        const {_id, status} = req.body;
+        const {_id, status, approve} = req.body;
         const advertise = await advertiseModel.findById(_id);
         if(!advertise){
             res.status(404).json({ error_message: "Advertise not found !" });
         }
+        
         advertise.status = status;
+        advertise.approve = approve;
+
+
         const updatedAdvertise = await advertise.save();
         if (updatedAdvertise) {
             res.status(200).json({ message: "Advertise state updated successfully :)" });

@@ -149,6 +149,39 @@ const updateUser = errorHandler(async (req, res, next) => {
 });
 
 
+//-------- update user password ----------
+const updatePassword = errorHandler(async (req, res, next) => {
+    try {
+        const { userId, currentPassword, newPassword } = req.body;
+        const user = await userModel.findById(userId);
+
+        if (!userId || !currentPassword || !newPassword) {
+            res.status(400).json({ error_message: "all fields are required !" });
+        } else if (!user) {
+            res.status(404).json({ error_message: "User not found !" });
+        }
+        if ((await bcrypt.compare(currentPassword, user.password))){
+            const newEncriptPass = await bcrypt.hash(newPassword,10);
+            user.password = newEncriptPass;
+
+            const updatedUser = await user.save();
+            if (updatedUser) {
+                res.status(200).json({ message: "password updated successfully :)" });
+            } else {
+                res.status(400).json({ error_message: "Failed to update password. Please try again." });
+            }
+        }else{
+            res.status(200).json({ message: "Wrong current password" });
+        }
+    } catch (err) {
+        next(err);
+        console.error('Error updating profile:', err);
+        res.status(500).json({ message: "Internal server error !" });
+    }
+});
+
+
+
 
 //-------- get all user profiles ----------
 const getAllUsers=errorHandler(async(req,res,next)=>{
@@ -207,7 +240,7 @@ const deleteUser=errorHandler(async(req,res,next)=>{
 });
 
 
-module.exports={loginUser,registerUser,getAllUsers,getUserByemail,updateUser,forgetPassword,deleteUser};
+module.exports={loginUser,registerUser,getAllUsers,getUserByemail,updateUser,forgetPassword,deleteUser, updatePassword};
 
 
 
