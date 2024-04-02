@@ -1,6 +1,6 @@
 const transectionModel=require("../models/transectionModel");
 const advertiseModel = require("../models/advertiseModel");
-const applicationModel=require("../models/applicationRegisterModel")
+const applicationModel=require("../models/applicationRegisterModel");
 const crypto = require("crypto");
 const errorHandler=require("express-async-handler");
 

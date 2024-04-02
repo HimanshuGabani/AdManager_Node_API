@@ -18,6 +18,8 @@ app.use("/transaction", require("./routes/transectionRouts"));
 app.use("/application", require("./routes/applicationRegisterRoute"));
 app.use("/fire", require("./routes/fireRout"));
 
+app.use("/images", require("./routes/imageuploadRouter"));
+
 
 
 app.listen(port,()=>{
