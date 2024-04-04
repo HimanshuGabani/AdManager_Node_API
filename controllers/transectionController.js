@@ -30,7 +30,7 @@ const purcheseAdvertise=errorHandler(async(req,res)=>{
             isAdvertisExist.transactionId = transactionId;
             isAdvertisExist.remain_Views += views;
             isAdvertisExist.amount = amount;
-            isAdvertisExist.status = "ongoing"
+            isAdvertisExist.status = "pending"
 
             const adUpdated = await isAdvertisExist.save();
             if (!adUpdated){

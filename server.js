@@ -17,7 +17,7 @@ app.use("/advertise", require("./routes/advertiseRoute"));
 app.use("/transaction", require("./routes/transectionRouts"));
 app.use("/application", require("./routes/applicationRegisterRoute"));
 app.use("/fire", require("./routes/fireRout"));
-
+app.use("/chart", require("./routes/publisherChartRouts"))
 app.use("/images", require("./routes/imageuploadRouter"));
 
 

@@ -1,6 +1,7 @@
 const { application } = require("express");
 const advertiseModel = require("../models/advertiseModel");
-const applicationModel = require("../models/applicationRegisterModel")
+const applicationModel = require("../models/applicationRegisterModel");
+const publisherChart = require("../models/publisherChartModel");
 const errorHandler=require("express-async-handler");
 const { app } = require("firebase-admin");
 
@@ -118,8 +119,6 @@ const changeState=errorHandler(async(req,res,next)=>{
     }
 });
 
-
-
 //-------- delete Advertise ----------
 const deleteAdvertise=errorHandler(async(req,res,next)=>{
     try {
@@ -158,43 +157,6 @@ const getAdvertise=errorHandler(async(req,res,next)=>{
     }
 });
 
-
-//-------- Watch Minuse Advertise ----------
-// const watchAdvertise=errorHandler(async(req,res,next)=>{
-//     try {
-//         const {id} = req.body;
-//         const advertise = await advertiseModel.findById(id);
-
-//         if (advertise.remain_Views == 0) {
-//             advertise.approve = false;
-//             advertise.status = "history";
-//             await advertise.save();
-//             res.status(200).json({ message: "This advertise is dissable" });
-//         } else {
-//             advertise.remain_Views -= 1;
-//             if (advertise.remain_Views == 0) {
-//                 advertise.transactionId = "";
-//                 advertise.amount = 0;
-//                 advertise.status = "history";
-//                 await advertise.save();
-//                 res.status(200).json({ message: "This advertise is dissable" });
-//             }
-//         }
-
-//         const updatedAdvertise = await advertise.save();
-//         if (updatedAdvertise) {
-//             res.status(200).json({ message: "current remain views :-  "+advertise.remain_Views });
-//         } else {
-//             res.status(400).json({ error_message: "Failed to decrise Advertise views. Please try again." });
-//         }       
-
-//     } catch (error) {
-//         next(error);
-//         res.status(500).json({ message: "Internal server error !" });
-//     }
-
-// });
-
 const getRandomDocument = errorHandler(async (req, res, next) => {
     try {
         const appID = req.headers["appid"];
@@ -207,7 +169,7 @@ const getRandomDocument = errorHandler(async (req, res, next) => {
 
             // Minus From Advertise
             adv.remain_Views -= 1;
-            console.log(adv.remain_Views);
+            console.log({remainViews: adv.remain_Views});
 
             if (adv.remain_Views === 0) { 
                 adv.status = "history";
@@ -215,13 +177,57 @@ const getRandomDocument = errorHandler(async (req, res, next) => {
 
             // Save the updated document back to the database
             const updatedAdvertise = await advertiseModel.findByIdAndUpdate(adv._id, adv);
-            if (!updateAdveritse) {
+            if (!updatedAdvertise) {
                 res.status(200).json({ message: "Advertise is not update" });
             } else {
                 if (appID) {
                     const app = await applicationModel.findById(appID);
                     if (!app){
                         res.status(200).json({ message: "This application is not registered" }); 
+                    }
+                    const publisherId = app.publisherId;
+                    const chartData = await publisherChart.findOne({ publisherId: publisherId, platformId: "Main" });
+                    const currentDate = new Date();
+                    const formattedDate = currentDate.toLocaleDateString('en-GB');
+                    if (!chartData) {
+                        const mainOne=await publisherChart.create({
+                            publisherId,
+                            platformId: "Main",
+                            earning: 1,
+                            date: formattedDate
+
+                        });
+                        
+                        const createOne=await publisherChart.create({
+                            publisherId,
+                            platformId: app._id,
+                            earning: 1,
+                            date: formattedDate
+                        });
+
+                        if (!createOne || !mainOne) {
+                            res.status(400).json({error_message:" Chart Data not create error !"});
+                        }
+
+                    }else{
+                        const curretDayChart = await publisherChart.findOne({ publisherId: publisherId, platformId: app._id, date: formattedDate });
+                        if (!curretDayChart) {
+                            const createOne=await publisherChart.create({
+                                publisherId,
+                                platformId: app._id,
+                                earning: 1,
+                                date: formattedDate
+                            });
+
+                            if (!createOne) {
+                                res.status(400).json({error_message:" Chart Data not create error !"});
+                            }
+                        }else{
+                            curretDayChart.earning += 1;
+                            await curretDayChart.save();
+                        }
+                        chartData.earning += 1;
+                        await chartData.save();
                     }
                     app.total_Views += 1;
                     app.totalEarn += 1;
@@ -245,10 +251,26 @@ const advertiseClicked = errorHandler(async (req, res, next) => {
         if (!appID){
             res.status(200).json({ message: "Missing Headers Application Id" }); 
         }else{
+            const currentDate = new Date();
+            const formattedDate = currentDate.toLocaleDateString('en-GB');
+
             const app = await applicationModel.findById(appID);
             app.totalClicks += 1;
             app.totalEarn += 2;
             const clicked = await app.save();
+
+
+            const publisherId = app.publisherId;
+            const chartData = await publisherChart.findOne({ publisherId: publisherId, platformId: "Main" });
+            const curretDayChart = await publisherChart.findOne({ platformId: app._id, date: formattedDate });
+
+            
+            chartData.earning += 2;
+            curretDayChart.earning += 2;
+
+            await curretDayChart.save();
+            await chartData.save();
+
             if(clicked){
                 res.status(200).json({ message: "Advertise Click Saved" }); 
             }else{
@@ -262,9 +284,6 @@ const advertiseClicked = errorHandler(async (req, res, next) => {
         res.status(500).json({ message: "Internal server error!" });
     }
 });
-
-
-
 
 
 

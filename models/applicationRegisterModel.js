@@ -43,8 +43,6 @@ const applicaitonSchema=mongoose.Schema({
         default: 0,
         required: true
     }
-
-
 },
     {
         timestamps:true,
