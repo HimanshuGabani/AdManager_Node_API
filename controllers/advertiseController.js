@@ -56,9 +56,9 @@ const getAllAdvertise=errorHandler(async(req,res,next)=>{
 //-------- update Advertise ----------
 const updateAdveritse = errorHandler(async (req, res, next) => {
     try {
-        const {id, titel,category,redirect,image,type,remain_Views,status } = req.body;
+        const {id, title,category,redirect,image,type } = req.body;
         
-        if (!id) {
+        if (!id || !title || !category || !redirect || !image || !type) {
             res.status(400).json({ error_message: "All fields are required !" });
         }
         const advertise = await advertiseModel.findById(id);
@@ -66,20 +66,18 @@ const updateAdveritse = errorHandler(async (req, res, next) => {
         if (!advertise) {
             res.status(404).json({ error_message: "Advertise not found !" });
         }else{  
-            advertise.titel = titel;
+            advertise.title = title;
             advertise.category = category;
             advertise.redirect = redirect;
             advertise.image = image;
             advertise.type = type;
-            advertise.remain_Views = remain_Views;
-            advertise.status = status;
+            advertise.status = "pending";
 
             const updatedAdvertise = await advertise.save();
             if (updatedAdvertise) {
+                console.log(updatedAdvertise);
                 res.status(200).json({ message: "Advertise updated successfully :)" });
             } else {
-                db.collection
-
                 res.status(400).json({ error_message: "Failed to update Advertise. Please try again." });
             }
         }
