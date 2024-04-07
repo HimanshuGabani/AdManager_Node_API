@@ -43,6 +43,38 @@ const getAllPlans=errorHandler(async(req,res,next)=>{
     }
 });
 
-module.exports={createPlans, getAllPlans};
+//-------- update Advertise ----------
+const updatePlans = errorHandler(async (req, res, next) => {
+    try {
+        const {id} = req.body;
+        
+        if (!id) {
+            res.status(400).json({ error_message: "Id Must required !" });
+        }
+        const Plan = await adv_plansModel.findById(id);
+
+        if (!Plan) {
+            res.status(404).json({ error_message: "Advertise not found !" });
+        }else{ 
+            Plan.status = "Inactive";
+
+            const updatedAdvertise = await Plan.save();
+            if (updatedAdvertise) {
+                res.status(200).json({ message: "Plan updated successfully :)" });
+            } else {
+                res.status(400).json({ error_message: "Failed to update Plan. Please try again." });
+            }
+        }
+        
+    } catch (err) {
+        next(err);
+        console.error('Error updating Advertise:', err);
+        res.status(500).json({ message: "Internal server error !" });
+    }
+});
+
+
+
+module.exports={createPlans, getAllPlans, updatePlans};
 
 

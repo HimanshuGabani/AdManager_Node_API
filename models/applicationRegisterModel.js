@@ -1,7 +1,5 @@
 const mongoose=require("mongoose");
 
-
-
 const applicaitonSchema=mongoose.Schema({
     name: {
         type: String,

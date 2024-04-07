@@ -24,7 +24,7 @@ const adv_plansModel=mongoose.Schema({
     status: {
         type: String,
         enum: ['Active', 'Inactive'],
-        default: 'pending'
+        default: 'Active'
     },
 },
     {
