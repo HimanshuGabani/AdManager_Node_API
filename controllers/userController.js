@@ -113,11 +113,10 @@ const forgetPassword = errorHandler(async (req, res) => {
 //-------- update user profile ----------
 const updateUser = errorHandler(async (req, res, next) => {
     try {
-        const { name, email, contactNo, password, role, profileUrl } = req.body;
-        const userId = req.query.id; 
+        const {userId, name, email, contactNo } = req.body;
         const user = await userModel.findById(userId);
 
-        if (!name || !email || !contactNo ||!role || !password || !profileUrl) {
+        if (!name || !email || !contactNo) {
             res.status(400).json({ error_message: "All fields are required !" });
         }
         else if (!user) {
@@ -130,10 +129,6 @@ const updateUser = errorHandler(async (req, res, next) => {
             user.name = name;
             user.email = email;
             user.contactNo = contactNo;
-            user.role = role;
-            user.password = password;
-            user.profileImg = profileUrl;
-
             const updatedUser = await user.save();
             if (updatedUser) {
                 res.status(200).json({ message: "User updated successfully :)" });

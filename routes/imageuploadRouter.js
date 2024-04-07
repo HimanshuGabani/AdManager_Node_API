@@ -6,7 +6,8 @@ const app = express();
 
 const imageSchema = new mongoose.Schema({
   data: Buffer,
-  contentType: String
+  contentType: String,
+  userId: String
 });
 
 const Image = mongoose.model('Image', imageSchema);
@@ -20,8 +21,8 @@ app.post('/upload', upload.single('image'), async (req, res) => {
   try {
     const image = new Image({
       data: req.file.buffer,
-      contentType: req.file.mimetype
-
+      contentType: req.file.mimetype,
+      userId: req.file.userId
     });
     await image.save();
     res.status(201).send('Image uploaded successfully!');
@@ -30,26 +31,20 @@ app.post('/upload', upload.single('image'), async (req, res) => {
   }
 });
 
-app.get('/getImage', async (req, res) => {
-    try {
-      const image = await Image.findById(req.body.id);
-  
-      if (!image) {
-        return res.status(404).send('Image not found');
-      }
-  
-      res.set('Content-Type', image.contentType);
-      res.send(image.data);
-    } catch (error) {
-      res.status(500).send(error.message);
+
+app.get('/image/:id', async (req, res) => {
+  try {
+    const image = await Image.findById(req.params.id);
+    if (!image) {
+      return res.status(404).send('Image not found');
     }
-  });
-
-app.route("").get();
-
-
-
-
-
+    // Set the appropriate content type
+    res.set('Content-Type', image.contentType);
+    // Send the image data
+    res.send(image.data);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 
 module.exports=app;
