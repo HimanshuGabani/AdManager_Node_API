@@ -219,7 +219,6 @@ const getUserByemail=errorHandler(async(req,res,next)=>{
 //-------- delete user profile ----------
 const deleteUser=errorHandler(async(req,res,next)=>{
     try {
-
         const {id}=req.body;
         const user = await userModel.findOneAndDelete({_id:id});
         // const user=await userModel.findOneAndDelete({_id:req.query.id});
