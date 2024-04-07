@@ -23,7 +23,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     const id = req.headers.userid;
     const image = new Image({
       data: req.file.buffer,
-      contentType: req.file.mimetype
+      contentType: "image/jpeg"
     });
 
     const userupdate = await userModel.findById(id);
@@ -79,7 +79,8 @@ app.get('/getAll', async (req, res) => {
 app.delete('', async (req, res) => {
   try {
     const id = req.body.id;
-    const image = await Image.deleteOne({_id:id});
+    // const image = await Image.deleteOne({_id:id});
+    const image = await Image.deleteMany();
     console.log({Domo: image});
     if (!image) {
       return res.status(404).send('Image not found');
