@@ -169,7 +169,7 @@ const getRandomDocument = errorHandler(async (req, res, next) => {
             adv.remain_Views -= 1;
             console.log({remainViews: adv.remain_Views});
 
-            if (adv.remain_Views === 0) { 
+            if (adv.remain_Views <= 0) { 
                 adv.status = "history";
             }
 
