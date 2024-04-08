@@ -19,6 +19,7 @@ app.use("/application", require("./routes/applicationRegisterRoute"));
 app.use("/fire", require("./routes/fireRout"));
 app.use("/chart", require("./routes/publisherChartRouts"))
 app.use("/images", require("./routes/imageuploadRouter"));
+app.use("/message", require("./routes/contactUsRouter"));
 
 
 
