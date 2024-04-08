@@ -134,6 +134,42 @@ const totalEarning = errorHandler(async(req,res,next)=>{
     }
 });
 
+const publisherTrans = errorHandler(async(req,res,next)=>{
+
+    try {
+        const {publisherId}=req.body;   
+        const totalEarning = await transectionModel.find({publisherId:publisherId})
+        if (!totalEarning) {
+            res.status(404).json({error_message:"No Data Availabel !"});
+        } else{
+            res.send(totalEarning);
+        }
+
+    } catch (err) {
+        next(err);
+        res.status(500).json({ message: "Internal server error !" });
+    }
+});
+
+const advertiserTrans = errorHandler(async(req,res,next)=>{
+
+    try {
+        const {advertisId}=req.body;   
+        const totalEarning = await transectionModel.find({advertisId:advertisId})
+        if (!totalEarning) {
+            res.status(404).json({error_message:"No Data Availabel !"});
+        } else{
+            res.send(totalEarning);
+        }
+
+    } catch (err) {
+        next(err);
+        res.status(500).json({ message: "Internal server error !" });
+    }
+});
+
+
+
 
 const currentBalance = errorHandler(async(req,res,next)=>{
 
@@ -267,6 +303,6 @@ const withdrawal=errorHandler(async(req,res,next)=>{
 });
 
 
-module.exports={purcheseAdvertise, getAllTransections, totalExpense, totalEarning, currentBalance, withdrawal};
+module.exports={purcheseAdvertise, getAllTransections, totalExpense, totalEarning, currentBalance, withdrawal, publisherTrans, advertiserTrans};
 
 
